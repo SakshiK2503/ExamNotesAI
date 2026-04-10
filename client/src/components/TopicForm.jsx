@@ -29,8 +29,15 @@ function TopicForm({ setResult, setLoading, loading, setError }) {
         examType,
         revisionMode,
         includeDiagram,
-        includeChart})
-        setResult(result)                  //changed from result.data
+        includeChart});
+
+        if (!result) {
+         setError("Failed to generate notes");
+         setLoading(false);
+         return;
+          }
+
+        setResult(result)                  
         setLoading(false)
         setClassLevel("")
         setTopic("")
@@ -48,8 +55,11 @@ function TopicForm({ setResult, setLoading, loading, setError }) {
     } catch (error) {
    console.log(error)
    setError("Failed to fetch notes from server");
-      setLoading(false)
-    }
+     // setLoading(false)
+    } finally {
+  setLoading(false);  // ✅ ALWAYS runs
+}
+
   }
 
   useEffect(()=>{
