@@ -23,7 +23,7 @@ app.post(
 );
 
 app.use(cors(
-    {origin:"http://localhost:5173",
+    {origin: process.env.CLIENT_URL,
         credentials:true,
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     }
@@ -44,7 +44,7 @@ app.use("/api/notes", notesRouter)
 app.use("/api/pdf", pdfRouter)
 app.use("/api/credit",creditRouter)
 
-
+console.log("CLIENT_URL:", process.env.CLIENT_URL);
 
 app.listen(PORT,()=>{
     console.log(`server running on port ${PORT}`)
