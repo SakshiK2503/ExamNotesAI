@@ -1,35 +1,31 @@
-
-const Gemini_URL = 
-"https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent"
+const Gemini_URL =
+"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
 export const generateGeminiResponse = async (prompt) => {
-
-    try {
-         const response = await fetch(`${Gemini_URL}?key=${process.env.GEMINI_API_KEY}`,{
-        method:"POST",
+  try {
+    const response = await fetch(
+      `${Gemini_URL}?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
           contents: [
             {
-              parts: [
-                {
-                  text: prompt
-                }
-              ]
+              parts: [{ text: prompt }]
             }
           ]
         })
-
-    })
+      }
+    );
 
     if (!response.ok) {
       const err = await response.text();
       throw new Error(err);
     }
 
-    const data = await response.json()
+    const data = await response.json();
 
     const text =
       data.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -43,13 +39,16 @@ export const generateGeminiResponse = async (prompt) => {
       .replace(/```/g, "")
       .trim();
 
+    // ✅ SAFE PARSE
+    try {
       return JSON.parse(cleanText);
-
-
-
-    } catch (error) {
-        console.error("Gemini Fetch Error:", error.message);
-    throw new Error("Gemini API fetch failed");
+    } catch {
+      console.log("Returning raw text instead of JSON");
+      return cleanText;
     }
-   
-}
+
+  } catch (error) {
+    console.error("Gemini Fetch Error:", error.message);
+    throw new Error(error.message || "Gemini API fetch failed");
+  }
+};
